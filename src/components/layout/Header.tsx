@@ -1,63 +1,39 @@
 "use client";
 
 import * as React from "react";
-import {
-  AppBar,
-  Avatar,
-  Box,
-  Divider,
-  IconButton,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import { usePathname } from "next/navigation";
+import { AppBar, Avatar, Box, Divider, IconButton, Stack, Toolbar, Typography } from "@mui/material";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import MemoryRoundedIcon from "@mui/icons-material/MemoryRounded";
-import { useAuth } from "@/features/auth/hooks/useAuth";
-import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "@/constants/navigation";
-
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
+import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
+import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
+import NotificationsNoneRoundedIcon from "@mui/icons-material/NotificationsNoneRounded";
+import { HEADER_HEIGHT, NAV_ITEMS, SIDEBAR_WIDTH } from "@/constants/navigation";
 
 interface HeaderProps {
   onMenuClick: () => void;
 }
 
 export default function Header({ onMenuClick }: HeaderProps) {
-  const { user, logout } = useAuth();
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const pathname = usePathname();
+  const currentPage =
+    NAV_ITEMS.find((item) => pathname === item.href || pathname.startsWith(`${item.href}/`))?.label ??
+    "Dashboard";
 
-  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => setAnchorEl(null);
-
-  const handleLogout = () => {
-    handleCloseMenu();
-    logout();
-  };
+  const monthYear = new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
   return (
     <AppBar
       position="fixed"
       color="inherit"
+      elevation={0}
       sx={{
         bgcolor: "background.paper",
         height: HEADER_HEIGHT,
         zIndex: (theme) => theme.zIndex.drawer + 1,
         width: { md: `calc(100% - ${SIDEBAR_WIDTH}px)` },
         ml: { md: `${SIDEBAR_WIDTH}px` },
+        borderBottom: "1px solid",
+        borderColor: "divider",
       }}
     >
       <Toolbar sx={{ height: HEADER_HEIGHT, gap: 1.5 }}>
@@ -71,44 +47,80 @@ export default function Header({ onMenuClick }: HeaderProps) {
           <MenuRoundedIcon />
         </IconButton>
 
-        <Box sx={{ display: { xs: "flex", md: "none" }, alignItems: "center", gap: 1 }}>
-          <MemoryRoundedIcon color="primary" />
-          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-            IT Allocation Portal
+        <Stack
+          direction="row"
+          spacing={0.5}
+          sx={{ alignItems: "center", display: { xs: "none", sm: "flex" } }}
+        >
+          <Typography variant="body2" color="text.secondary">
+            Workspace
           </Typography>
-        </Box>
+          <ChevronRightRoundedIcon sx={{ fontSize: 16, color: "text.secondary" }} />
+          <Typography variant="body2" sx={{ fontWeight: 700 }}>
+            {currentPage}
+          </Typography>
+        </Stack>
 
         <Box sx={{ flexGrow: 1 }} />
 
-        <IconButton onClick={handleOpenMenu} aria-label="Account menu" size="small">
-          <Avatar sx={{ width: 36, height: 36, bgcolor: "primary.main", fontSize: 14 }}>
-            {user ? getInitials(user.name) : ""}
-          </Avatar>
-        </IconButton>
+        <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+          <Stack
+            direction="row"
+            spacing={0.5}
+            sx={{
+              alignItems: "center",
+              px: 1.5,
+              py: 0.5,
+              border: "1px solid",
+              borderColor: "divider",
+              borderRadius: "8px",
+              display: { xs: "none", sm: "flex" },
+            }}
+          >
+            <Typography variant="body2">{monthYear}</Typography>
+            <KeyboardArrowDownRoundedIcon sx={{ fontSize: 18, color: "text.secondary" }} />
+          </Stack>
 
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleCloseMenu}
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          transformOrigin={{ vertical: "top", horizontal: "right" }}
-        >
-          <Box sx={{ px: 2, py: 1, minWidth: 200 }}>
-            <Typography variant="subtitle2" noWrap sx={{ fontWeight: 700 }}>
-              {user?.name}
-            </Typography>
-            <Typography variant="caption" color="text.secondary" noWrap>
-              {user?.email}
-            </Typography>
-          </Box>
-          <Divider />
-          <MenuItem onClick={handleLogout}>
-            <ListItemIcon>
-              <LogoutRoundedIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Logout</ListItemText>
-          </MenuItem>
-        </Menu>
+          <IconButton
+            size="small"
+            aria-label="Notifications"
+            sx={{ display: { xs: "none", sm: "inline-flex" } }}
+          >
+            <NotificationsNoneRoundedIcon fontSize="small" />
+          </IconButton>
+
+          <Divider
+            orientation="vertical"
+            flexItem
+            sx={{ display: { xs: "none", sm: "block" }, my: 1 }}
+          />
+
+          <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+            <Avatar
+              sx={{
+                width: 36,
+                height: 36,
+                bgcolor: "#f1f3f6",
+                color: "text.primary",
+                fontSize: 13,
+                fontWeight: 700,
+              }}
+            >
+              BH
+            </Avatar>
+            <Box sx={{ display: { xs: "none", sm: "block" } }}>
+              <Typography variant="body2" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
+                Business Head
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Read-only access
+              </Typography>
+            </Box>
+            <KeyboardArrowDownRoundedIcon
+              sx={{ fontSize: 18, color: "text.secondary", display: { xs: "none", sm: "block" } }}
+            />
+          </Stack>
+        </Stack>
       </Toolbar>
     </AppBar>
   );

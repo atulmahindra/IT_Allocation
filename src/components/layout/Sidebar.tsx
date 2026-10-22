@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Box,
@@ -10,9 +11,9 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Stack,
   Typography,
 } from "@mui/material";
-import MemoryRoundedIcon from "@mui/icons-material/MemoryRounded";
 import { HEADER_HEIGHT, NAV_ITEMS, SIDEBAR_WIDTH } from "@/constants/navigation";
 
 interface SidebarProps {
@@ -33,20 +34,35 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <Box
         sx={{
-          height: HEADER_HEIGHT,
+          minHeight: HEADER_HEIGHT,
           display: "flex",
           alignItems: "center",
           gap: 1.25,
           px: 2.5,
+          py: 2,
         }}
       >
-        <MemoryRoundedIcon color="primary" fontSize="medium" />
-        <Typography variant="subtitle1" noWrap sx={{ fontWeight: 700 }}>
-          IT Allocation Portal
-        </Typography>
+        <Image src="/images/logo.png" alt="" width={40} height={40} style={{ borderRadius: 8 }} />
+        <Box sx={{ minWidth: 0 }}>
+          <Typography variant="subtitle1" noWrap sx={{ fontWeight: 700, lineHeight: 1.2 }}>
+            IT Allocation
+          </Typography>
+          <Typography variant="caption" color="text.secondary" noWrap>
+            Enterprise portal
+          </Typography>
+        </Box>
       </Box>
       <Divider />
-      <List sx={{ px: 1.5, py: 2, flexGrow: 1 }}>
+      <Box sx={{ px: 2.5, pt: 2.5, pb: 1 }}>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ fontWeight: 700, letterSpacing: 0.8, textTransform: "uppercase" }}
+        >
+          Workspace
+        </Typography>
+      </Box>
+      <List sx={{ px: 1.5, py: 0.5, flexGrow: 1 }}>
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
           const Icon = item.icon;
@@ -56,15 +72,14 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
               selected={isActive}
               onClick={() => handleNavigate(item.href)}
               sx={{
-                borderRadius: 2,
+                borderRadius: "6px",
                 mb: 0.5,
-                color: isActive ? "primary.main" : "text.primary",
-                bgcolor: isActive ? "action.selected" : "transparent",
+                color: isActive ? "error.main" : "text.primary",
                 "&.Mui-selected": {
-                  bgcolor: "primary.main",
-                  color: "primary.contrastText",
-                  "& .MuiListItemIcon-root": { color: "primary.contrastText" },
-                  "&:hover": { bgcolor: "primary.dark" },
+                  bgcolor: "#fdecea",
+                  color: "error.main",
+                  "& .MuiListItemIcon-root": { color: "error.main" },
+                  "&:hover": { bgcolor: "#fbe0dd" },
                 },
               }}
             >
@@ -73,16 +88,21 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
               </ListItemIcon>
               <ListItemText
                 primary={item.label}
-                slotProps={{ primary: { sx: { fontWeight: isActive ? 600 : 500 } } }}
+                slotProps={{ primary: { sx: { fontWeight: isActive ? 700 : 500 } } }}
               />
             </ListItemButton>
           );
         })}
       </List>
       <Divider />
-      <Typography variant="caption" color="text.secondary" sx={{ px: 2.5, py: 2 }}>
-        © {new Date().getFullYear()} IT Allocation Portal
-      </Typography>
+      <Stack spacing={0.25} sx={{ px: 2.5, py: 2, textAlign: "center" }}>
+        <Typography variant="caption" sx={{ fontWeight: 700 }}>
+          © Mahindra-Logistics
+        </Typography>
+        <Typography variant="caption" color="text.secondary" sx={{ fontStyle: "italic" }}>
+          All rights reserved.
+        </Typography>
+      </Stack>
     </Box>
   );
 

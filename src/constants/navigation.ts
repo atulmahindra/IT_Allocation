@@ -1,5 +1,6 @@
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import BadgeRoundedIcon from "@mui/icons-material/BadgeRounded";
+import LaptopRoundedIcon from "@mui/icons-material/LaptopRounded";
 
 export interface NavItem {
   label: string;
@@ -10,6 +11,7 @@ export interface NavItem {
 export const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: DashboardRoundedIcon },
   { label: "Employee Details", href: "/employees", icon: BadgeRoundedIcon },
+  { label: "Laptop Details", href: "/laptops", icon: LaptopRoundedIcon },
 ];
 
 export const SIDEBAR_WIDTH = 260;
