@@ -1,25 +1,88 @@
-import type { LaptopRecord } from "../types";
+import { EMPLOYEE_DIRECTORY, VERTICAL_OPTIONS as EMPLOYEE_VERTICALS } from "@/features/employees/data/employeeDirectory";
+import type { LaptopAllocationRecord, LaptopAssetType, LaptopSpec } from "../types";
 
-export const LAPTOP_DIRECTORY: LaptopRecord[] = [
-  { id: "LAP1001", assetId: "LAP1001", model: "Dell Latitude 5440", assignedTo: "Aarav Mehta", department: "IT", assetType: "Standard Laptop", status: "Assigned" },
-  { id: "LAP1002", assetId: "LAP1002", model: "HP EliteBook 840", assignedTo: "Neha Shah", department: null, assetType: "Standard Laptop", status: "Assigned" },
-  { id: "LAP1003", assetId: "LAP1003", model: "Lenovo ThinkPad T14", assignedTo: "Rohan Iyer", department: null, assetType: "Standard Laptop", status: "Assigned" },
-  { id: "LAP1004", assetId: "LAP1004", model: "Dell Latitude 5440", assignedTo: "Priya Nair", department: null, assetType: "Standard Laptop", status: "Assigned" },
-  { id: "LAP1005", assetId: "LAP1005", model: "Apple MacBook Air M2", assignedTo: "Kabir Desai", department: null, assetType: "Premium Laptop", status: "Assigned" },
-  { id: "LAP1006", assetId: "LAP1006", model: "HP EliteBook 840", assignedTo: "Ananya Rao", department: null, assetType: "Standard Laptop", status: "Assigned" },
-  { id: "LAP1007", assetId: "LAP1007", model: "Lenovo ThinkPad T14", assignedTo: "Vikram Sethi", department: null, assetType: "Standard Laptop", status: "In Repair" },
-  { id: "LAP1008", assetId: "LAP1008", model: "Dell Latitude 5440", assignedTo: "Isha Kapoor", department: null, assetType: "Standard Laptop", status: "Assigned" },
-  { id: "LAP1009", assetId: "LAP1009", model: "Apple MacBook Air M2", assignedTo: "Dev Malhotra", department: null, assetType: "Premium Laptop", status: "Assigned" },
-  { id: "LAP1010", assetId: "LAP1010", model: "HP EliteBook 840", assignedTo: null, department: null, assetType: "Standard Laptop", status: "Unassigned" },
-];
+interface AssetAssignment {
+  assetType: LaptopAssetType;
+  spec: LaptopSpec | null;
+}
+
+const ASSET_ASSIGNMENTS: Record<string, AssetAssignment> = {
+  EMP1001: {
+    assetType: "Standard Laptop",
+    spec: { model: "Dell XPS 15", serial: "D9X-20481", processor: "Intel Core i7", ram: "16 GB", storage: "512 GB SSD", os: "Windows 11", lastSynced: "12 Oct 2026" },
+  },
+  EMP1002: {
+    assetType: "Standard Laptop",
+    spec: { model: "Dell XPS 15", serial: "D7K-11923", processor: "Intel Core i5", ram: "16 GB", storage: "512 GB SSD", os: "Windows 11", lastSynced: "10 Oct 2026" },
+  },
+  EMP1003: {
+    assetType: "Business Laptop",
+    spec: { model: "Lenovo ThinkPad X1 Carbon", serial: "L1C-55820", processor: "Intel Core i7", ram: "16 GB", storage: "512 GB SSD", os: "Windows 11 Pro", lastSynced: "14 Oct 2026" },
+  },
+  EMP1004: {
+    assetType: "Standard Laptop",
+    spec: { model: "Dell XPS 15", serial: "D9X-20502", processor: "Intel Core i5", ram: "16 GB", storage: "512 GB SSD", os: "Windows 11", lastSynced: "9 Oct 2026" },
+  },
+  EMP1005: {
+    assetType: "Business Laptop",
+    spec: { model: "Lenovo ThinkPad X1 Carbon", serial: "L1C-55841", processor: "Intel Core i7", ram: "16 GB", storage: "512 GB SSD", os: "Windows 11 Pro", lastSynced: "15 Oct 2026" },
+  },
+  EMP1006: { assetType: "No Laptop Required", spec: null },
+  EMP1007: {
+    assetType: "High-Performance Laptop",
+    spec: { model: "Dell Precision 5680", serial: "DP5-99213", processor: "Intel Core i9", ram: "32 GB", storage: "1 TB SSD", os: "Windows 11 Pro", lastSynced: "16 Oct 2026" },
+  },
+  EMP1008: {
+    assetType: "Standard Laptop",
+    spec: { model: "Dell XPS 15", serial: "D9X-20617", processor: "Intel Core i5", ram: "16 GB", storage: "512 GB SSD", os: "Windows 11", lastSynced: "11 Oct 2026" },
+  },
+  EMP1009: {
+    assetType: "Standard Laptop",
+    spec: { model: "Dell XPS 15", serial: "D9X-20633", processor: "Intel Core i7", ram: "16 GB", storage: "512 GB SSD", os: "Windows 11", lastSynced: "13 Oct 2026" },
+  },
+  EMP1010: {
+    assetType: "Business Laptop",
+    spec: { model: "Lenovo ThinkPad X1 Carbon", serial: "L1C-55902", processor: "Intel Core i7", ram: "16 GB", storage: "512 GB SSD", os: "Windows 11 Pro", lastSynced: "17 Oct 2026" },
+  },
+};
+
+export const LAPTOP_DIRECTORY: LaptopAllocationRecord[] = EMPLOYEE_DIRECTORY.map((employee) => {
+  const assignment = ASSET_ASSIGNMENTS[employee.empId] ?? { assetType: "No Laptop Required" as const, spec: null };
+  return {
+    id: employee.id,
+    empId: employee.empId,
+    name: employee.name,
+    department: employee.department,
+    vertical: employee.vertical,
+    licenceType: employee.licenceType,
+    assetType: assignment.assetType,
+    spec: assignment.spec,
+  };
+});
 
 export const DEPARTMENT_OPTIONS = Array.from(
   new Set(LAPTOP_DIRECTORY.map((item) => item.department).filter((value): value is string => Boolean(value))),
 );
 
-export const ASSET_TYPE_OPTIONS: Array<LaptopRecord["assetType"]> = ["Standard Laptop", "Premium Laptop"];
-export const STATUS_OPTIONS: Array<LaptopRecord["status"]> = ["Assigned", "Unassigned", "In Repair"];
+export const VERTICAL_OPTIONS = EMPLOYEE_VERTICALS;
 
-export const TOTAL_LAPTOPS = LAPTOP_DIRECTORY.length;
-export const ASSIGNED_LAPTOPS = LAPTOP_DIRECTORY.filter((item) => item.status === "Assigned").length;
-export const UNASSIGNED_LAPTOPS = LAPTOP_DIRECTORY.filter((item) => item.status !== "Assigned").length;
+export const LICENCE_TYPE_OPTIONS: Array<LaptopAllocationRecord["licenceType"]> = ["E1", "E3"];
+
+export const ASSET_TYPE_OPTIONS: LaptopAssetType[] = [
+  "Standard Laptop",
+  "Business Laptop",
+  "High-Performance Laptop",
+  "No Laptop Required",
+];
+
+export const TOTAL_LAPTOP_ALLOCATIONS = LAPTOP_DIRECTORY.filter(
+  (item) => item.assetType !== "No Laptop Required",
+).length;
+export const E1_LICENCE_COUNT = LAPTOP_DIRECTORY.filter((item) => item.licenceType === "E1").length;
+export const E3_LICENCE_COUNT = LAPTOP_DIRECTORY.filter((item) => item.licenceType === "E3").length;
+
+export const STANDARD_LAPTOP_COUNT = LAPTOP_DIRECTORY.filter((item) => item.assetType === "Standard Laptop").length;
+export const BUSINESS_LAPTOP_COUNT = LAPTOP_DIRECTORY.filter((item) => item.assetType === "Business Laptop").length;
+export const HIGH_PERFORMANCE_LAPTOP_COUNT = LAPTOP_DIRECTORY.filter(
+  (item) => item.assetType === "High-Performance Laptop",
+).length;

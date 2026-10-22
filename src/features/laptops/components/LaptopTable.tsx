@@ -18,20 +18,16 @@ import {
   Typography,
 } from "@mui/material";
 import UnfoldMoreRoundedIcon from "@mui/icons-material/UnfoldMoreRounded";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import { useLaptopDirectory } from "../hooks/useLaptopDirectory";
 import LaptopFilters from "./LaptopFilters";
-import type { AssetStatus } from "../types";
+import LaptopAssetPopover from "./LaptopAssetPopover";
+import type { LaptopAllocationRecord } from "../types";
 
-const COLUMNS = ["Asset ID", "Model", "Assigned To", "Department", "Asset Type", "Status"];
+const COLUMNS = ["Emp ID", "Name", "Department", "Vertical", "Licence Type", "IT Assets"];
 const ROWS_PER_PAGE_OPTIONS = [5, 10, 20];
-
-const STATUS_COLOR: Record<AssetStatus, { bgcolor: string; color: string }> = {
-  Assigned: { bgcolor: "#e8f5e9", color: "#2e7d32" },
-  Unassigned: { bgcolor: "action.selected", color: "text.secondary" },
-  "In Repair": { bgcolor: "#fdecea", color: "error.main" },
-};
 
 export default function LaptopTable() {
   const {
@@ -47,10 +43,24 @@ export default function LaptopTable() {
     changePageSize,
   } = useLaptopDirectory();
 
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const [activeRecord, setActiveRecord] = React.useState<LaptopAllocationRecord | null>(null);
+
   const monthYear = new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" });
   const rangeStart = total === 0 ? 0 : page * pageSize + 1;
   const rangeEnd = Math.min(total, page * pageSize + pageSize);
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
+
+  const handleAssetClick = (event: React.MouseEvent<HTMLElement>, record: LaptopAllocationRecord) => {
+    if (!record.spec) return;
+    setAnchorEl(event.currentTarget);
+    setActiveRecord(record);
+  };
+
+  const handleClosePopover = () => {
+    setAnchorEl(null);
+    setActiveRecord(null);
+  };
 
   return (
     <Paper elevation={0} sx={{ p: { xs: 2, sm: 3 }, border: "1px solid", borderColor: "divider" }}>
@@ -61,7 +71,7 @@ export default function LaptopTable() {
       >
         <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
           <Typography variant="h6" sx={{ fontWeight: 700 }}>
-            Laptop records
+            IT asset allocations
           </Typography>
           <Chip label={`${total} sample records`} size="small" sx={{ fontWeight: 600 }} />
         </Stack>
@@ -100,34 +110,48 @@ export default function LaptopTable() {
               <TableRow>
                 <TableCell colSpan={COLUMNS.length} align="center" sx={{ py: 5 }}>
                   <Typography variant="body2" color="text.secondary">
-                    No laptops match the current filters.
+                    No records match the current filters.
                   </Typography>
                 </TableCell>
               </TableRow>
             )}
 
-            {laptops.map((laptop) => (
-              <TableRow key={laptop.id} hover>
-                <TableCell>
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    {laptop.assetId}
-                  </Typography>
-                </TableCell>
-                <TableCell>{laptop.model}</TableCell>
-                <TableCell>{laptop.assignedTo ?? "—"}</TableCell>
-                <TableCell>{laptop.department ?? "—"}</TableCell>
-                <TableCell>
-                  <Chip label={laptop.assetType} size="small" sx={{ bgcolor: "action.selected", fontWeight: 600 }} />
-                </TableCell>
-                <TableCell>
-                  <Chip
-                    label={laptop.status}
-                    size="small"
-                    sx={{ ...STATUS_COLOR[laptop.status], fontWeight: 700 }}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
+            {laptops.map((record) => {
+              const hasAsset = Boolean(record.spec);
+              return (
+                <TableRow key={record.id} hover>
+                  <TableCell>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      {record.empId}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>{record.name}</TableCell>
+                  <TableCell>{record.department ?? "—"}</TableCell>
+                  <TableCell>{record.vertical}</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={record.licenceType}
+                      size="small"
+                      sx={{ bgcolor: "#fdecea", color: "error.main", fontWeight: 700 }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={record.assetType}
+                      size="small"
+                      clickable={hasAsset}
+                      onClick={hasAsset ? (event) => handleAssetClick(event, record) : undefined}
+                      icon={hasAsset ? <InfoOutlinedIcon sx={{ fontSize: 15 }} /> : undefined}
+                      sx={{
+                        bgcolor: "action.selected",
+                        fontWeight: 600,
+                        cursor: hasAsset ? "pointer" : "default",
+                      }}
+                    />
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
@@ -182,6 +206,8 @@ export default function LaptopTable() {
           </IconButton>
         </Stack>
       </Stack>
+
+      <LaptopAssetPopover anchorEl={anchorEl} record={activeRecord} onClose={handleClosePopover} />
     </Paper>
   );
 }

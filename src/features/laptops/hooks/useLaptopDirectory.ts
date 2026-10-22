@@ -7,8 +7,9 @@ import type { LaptopDirectoryFilters } from "../types";
 const DEFAULT_FILTERS: LaptopDirectoryFilters = {
   search: "",
   department: "All",
+  vertical: "All",
+  licenceType: "All",
   assetType: "All",
-  status: "All",
 };
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -20,16 +21,16 @@ export function useLaptopDirectory() {
 
   const filtered = React.useMemo(() => {
     const search = filters.search.trim().toLowerCase();
-    return LAPTOP_DIRECTORY.filter((laptop) => {
+    return LAPTOP_DIRECTORY.filter((item) => {
       const matchesSearch =
         search.length === 0 ||
-        laptop.assetId.toLowerCase().includes(search) ||
-        laptop.model.toLowerCase().includes(search) ||
-        (laptop.assignedTo ?? "").toLowerCase().includes(search);
-      const matchesDepartment = filters.department === "All" || laptop.department === filters.department;
-      const matchesAssetType = filters.assetType === "All" || laptop.assetType === filters.assetType;
-      const matchesStatus = filters.status === "All" || laptop.status === filters.status;
-      return matchesSearch && matchesDepartment && matchesAssetType && matchesStatus;
+        item.name.toLowerCase().includes(search) ||
+        item.empId.toLowerCase().includes(search);
+      const matchesDepartment = filters.department === "All" || item.department === filters.department;
+      const matchesVertical = filters.vertical === "All" || item.vertical === filters.vertical;
+      const matchesLicence = filters.licenceType === "All" || item.licenceType === filters.licenceType;
+      const matchesAsset = filters.assetType === "All" || item.assetType === filters.assetType;
+      return matchesSearch && matchesDepartment && matchesVertical && matchesLicence && matchesAsset;
     });
   }, [filters]);
 
@@ -56,8 +57,9 @@ export function useLaptopDirectory() {
   const hasActiveFilters =
     filters.search.trim().length > 0 ||
     filters.department !== "All" ||
-    filters.assetType !== "All" ||
-    filters.status !== "All";
+    filters.vertical !== "All" ||
+    filters.licenceType !== "All" ||
+    filters.assetType !== "All";
 
   return {
     laptops: paged,

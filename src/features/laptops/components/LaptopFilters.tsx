@@ -3,7 +3,12 @@
 import * as React from "react";
 import { Box, InputAdornment, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import { ASSET_TYPE_OPTIONS, DEPARTMENT_OPTIONS, STATUS_OPTIONS } from "../data/laptopDirectory";
+import {
+  ASSET_TYPE_OPTIONS,
+  DEPARTMENT_OPTIONS,
+  LICENCE_TYPE_OPTIONS,
+  VERTICAL_OPTIONS,
+} from "../data/laptopDirectory";
 import type { LaptopDirectoryFilters } from "../types";
 
 interface LaptopFiltersProps {
@@ -31,13 +36,14 @@ export default function LaptopFilters({ filters, hasActiveFilters, onChange, onC
   }, [searchInput]);
 
   return (
-    <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ width: "100%", alignItems: { sm: "center" } }}>
+    <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ width: "100%", alignItems: { sm: "center" }, flexWrap: "wrap" }}>
       <TextField
         value={searchInput}
         onChange={(event) => setSearchInput(event.target.value)}
-        placeholder="Search asset ID, model, or assignee"
+        placeholder="Search ID or name"
         size="small"
         fullWidth
+        sx={{ flex: { sm: "1 1 200px" } }}
         slotProps={{
           input: {
             startAdornment: (
@@ -49,7 +55,7 @@ export default function LaptopFilters({ filters, hasActiveFilters, onChange, onC
         }}
       />
 
-      <Box sx={{ minWidth: { sm: 170 } }}>
+      <Box sx={{ minWidth: { sm: 150 } }}>
         <TextField
           select
           label="Department"
@@ -70,7 +76,45 @@ export default function LaptopFilters({ filters, hasActiveFilters, onChange, onC
       <Box sx={{ minWidth: { sm: 170 } }}>
         <TextField
           select
-          label="Asset Type"
+          label="Business Vertical"
+          value={filters.vertical}
+          onChange={(event) => onChange({ vertical: event.target.value })}
+          size="small"
+          fullWidth
+        >
+          <MenuItem value="All">All verticals</MenuItem>
+          {VERTICAL_OPTIONS.map((vertical) => (
+            <MenuItem key={vertical} value={vertical}>
+              {vertical}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Box>
+
+      <Box sx={{ minWidth: { sm: 150 } }}>
+        <TextField
+          select
+          label="Licence Type"
+          value={filters.licenceType}
+          onChange={(event) =>
+            onChange({ licenceType: event.target.value as LaptopDirectoryFilters["licenceType"] })
+          }
+          size="small"
+          fullWidth
+        >
+          <MenuItem value="All">All licence types</MenuItem>
+          {LICENCE_TYPE_OPTIONS.map((licenceType) => (
+            <MenuItem key={licenceType} value={licenceType}>
+              {licenceType}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Box>
+
+      <Box sx={{ minWidth: { sm: 170 } }}>
+        <TextField
+          select
+          label="Laptop Type"
           value={filters.assetType}
           onChange={(event) =>
             onChange({ assetType: event.target.value as LaptopDirectoryFilters["assetType"] })
@@ -78,28 +122,10 @@ export default function LaptopFilters({ filters, hasActiveFilters, onChange, onC
           size="small"
           fullWidth
         >
-          <MenuItem value="All">All asset types</MenuItem>
+          <MenuItem value="All">All laptop types</MenuItem>
           {ASSET_TYPE_OPTIONS.map((assetType) => (
             <MenuItem key={assetType} value={assetType}>
               {assetType}
-            </MenuItem>
-          ))}
-        </TextField>
-      </Box>
-
-      <Box sx={{ minWidth: { sm: 160 } }}>
-        <TextField
-          select
-          label="Status"
-          value={filters.status}
-          onChange={(event) => onChange({ status: event.target.value as LaptopDirectoryFilters["status"] })}
-          size="small"
-          fullWidth
-        >
-          <MenuItem value="All">All statuses</MenuItem>
-          {STATUS_OPTIONS.map((status) => (
-            <MenuItem key={status} value={status}>
-              {status}
             </MenuItem>
           ))}
         </TextField>

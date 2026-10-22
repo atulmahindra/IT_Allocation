@@ -1,19 +1,36 @@
-export type AssetType = "Standard Laptop" | "Premium Laptop";
-export type AssetStatus = "Assigned" | "Unassigned" | "In Repair";
+import type { LicenceType } from "@/features/employees/types";
 
-export interface LaptopRecord {
-  id: string;
-  assetId: string;
+export type LaptopAssetType =
+  | "Standard Laptop"
+  | "Business Laptop"
+  | "High-Performance Laptop"
+  | "No Laptop Required";
+
+export interface LaptopSpec {
   model: string;
-  assignedTo: string | null;
+  serial: string;
+  processor: string;
+  ram: string;
+  storage: string;
+  os: string;
+  lastSynced: string;
+}
+
+export interface LaptopAllocationRecord {
+  id: string;
+  empId: string;
+  name: string;
   department: string | null;
-  assetType: AssetType;
-  status: AssetStatus;
+  vertical: string;
+  licenceType: LicenceType;
+  assetType: LaptopAssetType;
+  spec: LaptopSpec | null;
 }
 
 export interface LaptopDirectoryFilters {
   search: string;
   department: string;
-  assetType: AssetType | "All";
-  status: AssetStatus | "All";
+  vertical: string;
+  licenceType: LicenceType | "All";
+  assetType: LaptopAssetType | "All";
 }

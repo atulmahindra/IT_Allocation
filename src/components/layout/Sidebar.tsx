@@ -5,7 +5,6 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Box,
-  Divider,
   Drawer,
   List,
   ListItemButton,
@@ -52,7 +51,6 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
           </Typography>
         </Box>
       </Box>
-      <Divider />
       <Box sx={{ px: 2.5, pt: 2.5, pb: 1 }}>
         <Typography
           variant="caption"
@@ -94,7 +92,6 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
           );
         })}
       </List>
-      <Divider />
       <Stack spacing={0.25} sx={{ px: 2.5, py: 2, textAlign: "center" }}>
         <Typography variant="caption" sx={{ fontWeight: 700 }}>
           © Mahindra-Logistics
@@ -115,7 +112,11 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
         ModalProps={{ keepMounted: true }}
         sx={{
           display: { xs: "block", md: "none" },
-          "& .MuiDrawer-paper": { width: SIDEBAR_WIDTH, boxSizing: "border-box" },
+          "& .MuiDrawer-paper": {
+            width: SIDEBAR_WIDTH,
+            boxSizing: "border-box",
+            bgcolor: "rgba(255, 255, 255, 1)",
+          },
         }}
       >
         {navList}
@@ -124,7 +125,11 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
         variant="permanent"
         sx={{
           display: { xs: "none", md: "block" },
-          "& .MuiDrawer-paper": { width: SIDEBAR_WIDTH, boxSizing: "border-box" },
+          "& .MuiDrawer-paper": {
+            width: SIDEBAR_WIDTH,
+            boxSizing: "border-box",
+            bgcolor: "rgba(255, 255, 255, 1)",
+          },
         }}
         open
       >
