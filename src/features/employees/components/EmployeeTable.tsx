@@ -4,8 +4,6 @@ import * as React from "react";
 import {
   Box,
   Chip,
-  IconButton,
-  MenuItem,
   Paper,
   Stack,
   Table,
@@ -13,13 +11,11 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
 import UnfoldMoreRoundedIcon from "@mui/icons-material/UnfoldMoreRounded";
-import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
-import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import { useEmployeeDirectory } from "../hooks/useEmployeeDirectory";
 import EmployeeFilters from "./EmployeeFilters";
 
@@ -41,9 +37,6 @@ export default function EmployeeTable() {
   } = useEmployeeDirectory();
 
   const monthYear = new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" });
-  const rangeStart = total === 0 ? 0 : page * pageSize + 1;
-  const rangeEnd = Math.min(total, page * pageSize + pageSize);
-  const pageCount = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <Paper elevation={0} sx={{ p: { xs: 2, sm: 3 }, border: "1px solid", borderColor: "divider" }}>
@@ -125,56 +118,15 @@ export default function EmployeeTable() {
         </Table>
       </TableContainer>
 
-      <Stack
-        direction={{ xs: "column", sm: "row" }}
-        spacing={1.5}
-        sx={{ mt: 2, alignItems: { sm: "center" }, justifyContent: "space-between" }}
-      >
-        <Typography variant="body2" color="text.secondary">
-          Showing {rangeStart}-{rangeEnd} of {total} sample records
-        </Typography>
-
-        <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
-          <Typography variant="body2" color="text.secondary">
-            Rows per page
-          </Typography>
-          <TextField
-            select
-            size="small"
-            value={pageSize}
-            onChange={(event) => changePageSize(Number(event.target.value))}
-            sx={{ width: 80 }}
-          >
-            {ROWS_PER_PAGE_OPTIONS.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
-
-          <IconButton
-            size="small"
-            disabled={page === 0}
-            onClick={() => changePage(page - 1)}
-            aria-label="Previous page"
-          >
-            <ChevronLeftRoundedIcon fontSize="small" />
-          </IconButton>
-          <Chip
-            label={page + 1}
-            size="small"
-            sx={{ bgcolor: "error.main", color: "error.contrastText", fontWeight: 700, minWidth: 28 }}
-          />
-          <IconButton
-            size="small"
-            disabled={page >= pageCount - 1}
-            onClick={() => changePage(page + 1)}
-            aria-label="Next page"
-          >
-            <ChevronRightRoundedIcon fontSize="small" />
-          </IconButton>
-        </Stack>
-      </Stack>
+      <TablePagination
+        component="div"
+        count={total}
+        page={page}
+        onPageChange={(_, nextPage) => changePage(nextPage)}
+        rowsPerPage={pageSize}
+        onRowsPerPageChange={(event) => changePageSize(Number(event.target.value))}
+        rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
+      />
     </Paper>
   );
 }
