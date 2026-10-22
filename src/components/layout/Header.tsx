@@ -2,11 +2,26 @@
 
 import * as React from "react";
 import { usePathname } from "next/navigation";
-import { AppBar, Avatar, Box, Divider, IconButton, Stack, Toolbar, Typography } from "@mui/material";
+import {
+  AppBar,
+  Avatar,
+  Box,
+  Divider,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Stack,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
 import NotificationsNoneRoundedIcon from "@mui/icons-material/NotificationsNoneRounded";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { HEADER_HEIGHT, NAV_ITEMS, SIDEBAR_WIDTH } from "@/constants/navigation";
 
 interface HeaderProps {
@@ -15,11 +30,21 @@ interface HeaderProps {
 
 export default function Header({ onMenuClick }: HeaderProps) {
   const pathname = usePathname();
+  const { logout } = useAuth();
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+
   const currentPage =
     NAV_ITEMS.find((item) => pathname === item.href || pathname.startsWith(`${item.href}/`))?.label ??
     "Dashboard";
 
   const monthYear = new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
+  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
+  const handleCloseMenu = () => setAnchorEl(null);
+  const handleLogout = () => {
+    handleCloseMenu();
+    logout();
+  };
 
   return (
     <AppBar
@@ -95,7 +120,14 @@ export default function Header({ onMenuClick }: HeaderProps) {
             sx={{ display: { xs: "none", sm: "block" }, my: 1 }}
           />
 
-          <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+          <Stack
+            direction="row"
+            spacing={1}
+            onClick={handleOpenMenu}
+            sx={{ alignItems: "center", cursor: "pointer" }}
+            aria-haspopup="true"
+            aria-expanded={Boolean(anchorEl)}
+          >
             <Avatar
               sx={{
                 width: 36,
@@ -120,6 +152,30 @@ export default function Header({ onMenuClick }: HeaderProps) {
               sx={{ fontSize: 18, color: "text.secondary", display: { xs: "none", sm: "block" } }}
             />
           </Stack>
+
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleCloseMenu}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            transformOrigin={{ vertical: "top", horizontal: "right" }}
+          >
+            <Box sx={{ px: 2, py: 1, minWidth: 200 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                Business Head
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Read-only access
+              </Typography>
+            </Box>
+            <Divider />
+            <MenuItem onClick={handleLogout}>
+              <ListItemIcon>
+                <LogoutRoundedIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Logout</ListItemText>
+            </MenuItem>
+          </Menu>
         </Stack>
       </Toolbar>
     </AppBar>

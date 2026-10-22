@@ -1,23 +1,76 @@
 import type { Metadata } from "next";
-import { Box, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import GroupsRoundedIcon from "@mui/icons-material/GroupsRounded";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import PersonAddAlt1RoundedIcon from "@mui/icons-material/PersonAddAlt1Rounded";
+import StatSummaryCard from "@/components/common/StatSummaryCard";
 import EmployeeTable from "@/features/employees/components/EmployeeTable";
+import { FIXED_EMPLOYEES, TOTAL_EMPLOYEES, VARIABLE_EMPLOYEES } from "@/features/employees/data/employeeDirectory";
 
 export const metadata: Metadata = {
   title: "Employee Details | IT Allocation Portal",
 };
 
 export default function EmployeesPage() {
+  const monthYear = new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
   return (
-    <Box>
-      <Box sx={{ mb: 2.5 }}>
+    <Stack spacing={3}>
+      <Box>
         <Typography variant="h5" sx={{ fontWeight: 700 }}>
           Employee Details
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Manage employee records, assignments, and contact information.
+          View employee records and their assigned licence categories.
         </Typography>
       </Box>
+
+      <Grid container spacing={2.5}>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <StatSummaryCard
+            label="Total employees"
+            value={TOTAL_EMPLOYEES}
+            caption={`Sample subset · ${monthYear}`}
+            icon={GroupsRoundedIcon}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <StatSummaryCard
+            label="Fixed employees"
+            value={FIXED_EMPLOYEES}
+            caption="Within the 10-record sample subset"
+            icon={PersonRoundedIcon}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <StatSummaryCard
+            label="Variable employees"
+            value={VARIABLE_EMPLOYEES}
+            caption="Within the 10-record sample subset"
+            icon={PersonAddAlt1RoundedIcon}
+          />
+        </Grid>
+      </Grid>
+
+      <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+        <InfoOutlinedIcon sx={{ fontSize: 16, color: "text.secondary" }} />
+        <Typography variant="caption" color="text.secondary">
+          10 fictional sample records · Sample subset, not the 120-employee monthly aggregate ·
+          Business Head access is read-only.
+        </Typography>
+      </Stack>
+
       <EmployeeTable />
-    </Box>
+
+      <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+        <InfoOutlinedIcon sx={{ fontSize: 16, color: "text.secondary" }} />
+        <Typography variant="caption" color="text.secondary">
+          Fixed / variable classification is illustrative. All employee and allocation records are
+          sample data, not live backend data.
+        </Typography>
+      </Stack>
+    </Stack>
   );
 }

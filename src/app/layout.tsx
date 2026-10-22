@@ -14,6 +14,9 @@ const georama = Georama({
 export const metadata: Metadata = {
   title: "IT Allocation Portal",
   description: "Manage IT asset allocation and employee records",
+  icons: {
+    icon: "/images/logo.png",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

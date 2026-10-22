@@ -48,7 +48,7 @@ export default function AllocationChart() {
         sx={{ alignItems: { sm: "center" }, justifyContent: "space-between" }}
       >
         <Box>
-          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+          <Typography variant="h6" sx={{ fontWeight: 700 }}>
             Monthly Employee Allocation &amp; IT Cost
           </Typography>
           <Typography variant="body2" color="text.secondary">

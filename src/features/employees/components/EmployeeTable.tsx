@@ -2,12 +2,10 @@
 
 import * as React from "react";
 import {
-  Alert,
-  Avatar,
   Box,
-  Button,
   Chip,
   IconButton,
+  MenuItem,
   Paper,
   Stack,
   Table,
@@ -15,32 +13,18 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
-  Tooltip,
+  TextField,
   Typography,
 } from "@mui/material";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
-import EditRoundedIcon from "@mui/icons-material/EditRounded";
-import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-import ConfirmDialog from "@/components/common/ConfirmDialog";
-import { useEmployees } from "../hooks/useEmployees";
+import UnfoldMoreRoundedIcon from "@mui/icons-material/UnfoldMoreRounded";
+import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
+import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
+import { useEmployeeDirectory } from "../hooks/useEmployeeDirectory";
 import EmployeeFilters from "./EmployeeFilters";
-import EmployeeFormDialog from "./EmployeeFormDialog";
-import EmployeeViewDialog from "./EmployeeViewDialog";
-import type { Employee, EmployeeInput } from "../types";
 
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
-
-type DialogMode = "add" | "edit" | null;
+const COLUMNS = ["Emp ID", "Name", "Department", "Vertical", "Licence Type", "IT Assets"];
+const ROWS_PER_PAGE_OPTIONS = [5, 10, 20];
 
 export default function EmployeeTable() {
   const {
@@ -49,113 +33,65 @@ export default function EmployeeTable() {
     filters,
     page,
     pageSize,
-    isLoading,
-    error,
+    hasActiveFilters,
     updateFilters,
+    clearFilters,
     changePage,
     changePageSize,
-    addEmployee,
-    editEmployee,
-    removeEmployee,
-  } = useEmployees();
+  } = useEmployeeDirectory();
 
-  const [dialogMode, setDialogMode] = React.useState<DialogMode>(null);
-  const [activeEmployee, setActiveEmployee] = React.useState<Employee | null>(null);
-  const [viewEmployee, setViewEmployee] = React.useState<Employee | null>(null);
-  const [deleteTarget, setDeleteTarget] = React.useState<Employee | null>(null);
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [isDeleting, setIsDeleting] = React.useState(false);
-
-  const openAddDialog = () => {
-    setActiveEmployee(null);
-    setDialogMode("add");
-  };
-
-  const openEditDialog = (employee: Employee) => {
-    setActiveEmployee(employee);
-    setDialogMode("edit");
-  };
-
-  const closeFormDialog = () => {
-    setDialogMode(null);
-    setActiveEmployee(null);
-  };
-
-  const handleFormSubmit = async (input: EmployeeInput) => {
-    setIsSubmitting(true);
-    try {
-      if (dialogMode === "edit" && activeEmployee) {
-        await editEmployee(activeEmployee.id, input);
-      } else {
-        await addEmployee(input);
-      }
-      closeFormDialog();
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!deleteTarget) return;
-    setIsDeleting(true);
-    try {
-      await removeEmployee(deleteTarget.id);
-      setDeleteTarget(null);
-    } finally {
-      setIsDeleting(false);
-    }
-  };
+  const monthYear = new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  const rangeStart = total === 0 ? 0 : page * pageSize + 1;
+  const rangeEnd = Math.min(total, page * pageSize + pageSize);
+  const pageCount = Math.max(1, Math.ceil(total / pageSize));
 
   return (
-    <Paper sx={{ p: { xs: 2, sm: 3 } }}>
+    <Paper elevation={0} sx={{ p: { xs: 2, sm: 3 }, border: "1px solid", borderColor: "divider" }}>
       <Stack
         direction={{ xs: "column", sm: "row" }}
-        spacing={2}
-        sx={{
-          mb: 3,
-          justifyContent: "space-between",
-          alignItems: { xs: "flex-start", sm: "center" },
-        }}
+        spacing={1.5}
+        sx={{ mb: 2.5, alignItems: { sm: "center" }, justifyContent: "space-between" }}
       >
-        <Box>
+        <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
           <Typography variant="h6" sx={{ fontWeight: 700 }}>
-            Employee Directory
+            Employee records
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {total} employee{total === 1 ? "" : "s"} found
-          </Typography>
-        </Box>
-        <Button variant="contained" startIcon={<AddRoundedIcon />} onClick={openAddDialog}>
-          Add Employee
-        </Button>
+          <Chip label={`${total} sample records`} size="small" sx={{ fontWeight: 600 }} />
+        </Stack>
+        <Typography variant="body2" color="text.secondary">
+          {monthYear}
+        </Typography>
       </Stack>
 
       <Box sx={{ mb: 2.5 }}>
-        <EmployeeFilters filters={filters} onChange={updateFilters} />
+        <EmployeeFilters
+          filters={filters}
+          hasActiveFilters={hasActiveFilters}
+          onChange={updateFilters}
+          onClear={clearFilters}
+        />
       </Box>
-
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
 
       <TableContainer sx={{ borderRadius: 2, border: "1px solid", borderColor: "divider" }}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Employee</TableCell>
-              <TableCell>Department</TableCell>
-              <TableCell>Designation</TableCell>
-              <TableCell>Location</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              {COLUMNS.map((column) => (
+                <TableCell key={column}>
+                  <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
+                    <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                      {column}
+                    </Typography>
+                    <UnfoldMoreRoundedIcon sx={{ fontSize: 16, color: "text.secondary" }} />
+                  </Stack>
+                </TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {!isLoading && employees.length === 0 && (
+            {employees.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} align="center" sx={{ py: 5 }}>
+                <TableCell colSpan={COLUMNS.length} align="center" sx={{ py: 5 }}>
                   <Typography variant="body2" color="text.secondary">
                     No employees match the current filters.
                   </Typography>
@@ -163,101 +99,82 @@ export default function EmployeeTable() {
               </TableRow>
             )}
 
-            {isLoading
-              ? Array.from({ length: pageSize }).map((_, index) => (
-                  <TableRow key={`skeleton-${index}`}>
-                    <TableCell colSpan={6}>
-                      <Box sx={{ height: 24 }} />
-                    </TableCell>
-                  </TableRow>
-                ))
-              : employees.map((employee) => (
-                  <TableRow key={employee.id} hover>
-                    <TableCell>
-                      <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
-                        <Avatar sx={{ width: 36, height: 36, bgcolor: "primary.main", fontSize: 13 }}>
-                          {getInitials(employee.name)}
-                        </Avatar>
-                        <Box>
-                          <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            {employee.name}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {employee.employeeCode} · {employee.email}
-                          </Typography>
-                        </Box>
-                      </Stack>
-                    </TableCell>
-                    <TableCell>{employee.department}</TableCell>
-                    <TableCell>{employee.designation}</TableCell>
-                    <TableCell>{employee.location}</TableCell>
-                    <TableCell>
-                      <Chip
-                        label={employee.status}
-                        size="small"
-                        color={employee.status === "Active" ? "success" : "default"}
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      <Tooltip title="View">
-                        <IconButton size="small" onClick={() => setViewEmployee(employee)}>
-                          <VisibilityRoundedIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Edit">
-                        <IconButton size="small" onClick={() => openEditDialog(employee)}>
-                          <EditRoundedIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete">
-                        <IconButton
-                          size="small"
-                          color="error"
-                          onClick={() => setDeleteTarget(employee)}
-                        >
-                          <DeleteRoundedIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                ))}
+            {employees.map((employee) => (
+              <TableRow key={employee.id} hover>
+                <TableCell>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                    {employee.empId}
+                  </Typography>
+                </TableCell>
+                <TableCell>{employee.name}</TableCell>
+                <TableCell>{employee.department ?? "—"}</TableCell>
+                <TableCell>{employee.vertical}</TableCell>
+                <TableCell>
+                  <Chip
+                    label={employee.licenceType}
+                    size="small"
+                    sx={{ bgcolor: "#fdecea", color: "error.main", fontWeight: 700 }}
+                  />
+                </TableCell>
+                <TableCell>
+                  <Chip label={employee.itAsset} size="small" sx={{ bgcolor: "action.selected", fontWeight: 600 }} />
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
 
-      <TablePagination
-        component="div"
-        count={total}
-        page={page}
-        onPageChange={(_, nextPage) => changePage(nextPage)}
-        rowsPerPage={pageSize}
-        onRowsPerPageChange={(event) => changePageSize(Number(event.target.value))}
-        rowsPerPageOptions={[8, 16, 24]}
-      />
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={1.5}
+        sx={{ mt: 2, alignItems: { sm: "center" }, justifyContent: "space-between" }}
+      >
+        <Typography variant="body2" color="text.secondary">
+          Showing {rangeStart}-{rangeEnd} of {total} sample records
+        </Typography>
 
-      <EmployeeFormDialog
-        open={dialogMode !== null}
-        employee={activeEmployee}
-        isSubmitting={isSubmitting}
-        onClose={closeFormDialog}
-        onSubmit={handleFormSubmit}
-      />
+        <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+          <Typography variant="body2" color="text.secondary">
+            Rows per page
+          </Typography>
+          <TextField
+            select
+            size="small"
+            value={pageSize}
+            onChange={(event) => changePageSize(Number(event.target.value))}
+            sx={{ width: 80 }}
+          >
+            {ROWS_PER_PAGE_OPTIONS.map((option) => (
+              <MenuItem key={option} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </TextField>
 
-      <EmployeeViewDialog
-        open={Boolean(viewEmployee)}
-        employee={viewEmployee}
-        onClose={() => setViewEmployee(null)}
-      />
-
-      <ConfirmDialog
-        open={Boolean(deleteTarget)}
-        title="Delete employee"
-        description={`Are you sure you want to delete ${deleteTarget?.name ?? "this employee"}? This action cannot be undone.`}
-        confirmLabel="Delete"
-        isLoading={isDeleting}
-        onConfirm={handleDeleteConfirm}
-        onClose={() => setDeleteTarget(null)}
-      />
+          <IconButton
+            size="small"
+            disabled={page === 0}
+            onClick={() => changePage(page - 1)}
+            aria-label="Previous page"
+          >
+            <ChevronLeftRoundedIcon fontSize="small" />
+          </IconButton>
+          <Chip
+            label={page + 1}
+            size="small"
+            sx={{ bgcolor: "error.main", color: "error.contrastText", fontWeight: 700, minWidth: 28 }}
+          />
+          <IconButton
+            size="small"
+            disabled={page >= pageCount - 1}
+            onClick={() => changePage(page + 1)}
+            aria-label="Next page"
+          >
+            <ChevronRightRoundedIcon fontSize="small" />
+          </IconButton>
+        </Stack>
+      </Stack>
     </Paper>
   );
 }
