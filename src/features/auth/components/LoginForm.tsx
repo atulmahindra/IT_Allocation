@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
-import WindowRoundedIcon from "@mui/icons-material/WindowRounded";
+import Image from "next/image";
 import { useAuth } from "../hooks/useAuth";
 import { DEFAULT_AUTHENTICATED_PATH } from "@/constants/auth";
 import type { LoginCredentials } from "../types";
@@ -55,48 +55,67 @@ export default function LoginForm() {
         </Alert>
       )}
 
-      <TextField
-        {...register("email", {
-          validate: (value) => value.trim().length > 0 || "Email is required.",
-        })}
-        label="Email / Token ID"
-        placeholder="name@company.com"
-        fullWidth
-        margin="normal"
-        autoComplete="username"
-        error={Boolean(errors.email)}
-        helperText={errors.email?.message}
-      />
+      <Stack spacing={0.75} sx={{ mt: 2 }}>
+        <Typography variant="body2" sx={{ fontWeight: 700, color: "text.primary" }}>
+          Email / Token ID
+        </Typography>
+        <TextField
+          {...register("email", {
+            validate: (value) => value.trim().length > 0 || "Email is required.",
+          })}
+          placeholder="name@company.com"
+          fullWidth
+          autoComplete="username"
+          error={Boolean(errors.email)}
+          helperText={errors.email?.message}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "10px",
+              "& fieldset": { borderColor: "divider" },
+            },
+          }}
+        />
+      </Stack>
 
-      <TextField
-        {...register("password", {
-          validate: (value) => value.trim().length > 0 || "Password is required.",
-        })}
-        label="Password"
-        type={showPassword ? "text" : "password"}
-        fullWidth
-        margin="normal"
-        autoComplete="current-password"
-        error={Boolean(errors.password)}
-        helperText={errors.password?.message}
-        slotProps={{
-          input: {
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOffRoundedIcon /> : <VisibilityRoundedIcon />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          },
-        }}
-      />
+      <Stack spacing={0.75} sx={{ mt: 2.5 }}>
+        <Typography variant="body2" sx={{ fontWeight: 700, color: "text.primary" }}>
+          Password
+        </Typography>
+        <TextField
+          {...register("password", {
+            validate: (value) => value.trim().length > 0 || "Password is required.",
+          })}
+          type={showPassword ? "text" : "password"}
+          fullWidth
+          autoComplete="current-password"
+          error={Boolean(errors.password)}
+          helperText={errors.password?.message}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "10px",
+              "& fieldset": { borderColor: "divider" },
+            },
+          }}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    edge="end"
+                    size="small"
+                  >
+                    {showPassword ? <VisibilityOffRoundedIcon /> : <VisibilityRoundedIcon />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+      </Stack>
 
-      <Stack direction="row" sx={{ mt: 1, alignItems: "center", justifyContent: "space-between" }}>
+      <Stack direction="row" sx={{ mt: 1.5, alignItems: "center", justifyContent: "space-between" }}>
         <FormControlLabel
           control={<Checkbox {...register("rememberMe")} />}
           label="Remember me"
@@ -130,11 +149,16 @@ export default function LoginForm() {
         sx={{
           mt: 3,
           py: 1.25,
-          bgcolor: "#8a1414",
+          borderRadius: "10px",
+          background: "linear-gradient(90deg, #c41e2f 0%, #4a0707 100%)",
           fontWeight: 700,
           letterSpacing: 0.5,
           textTransform: "uppercase",
-          "&:hover": { bgcolor: "#6e0f0f" },
+          boxShadow: "none",
+          "&:hover": {
+            background: "linear-gradient(90deg, #ad1a29 0%, #3a0505 100%)",
+            boxShadow: "none",
+          },
         }}
       >
         {isSubmitting ? "Signing in..." : "Login"}
@@ -154,9 +178,17 @@ export default function LoginForm() {
             variant="outlined"
             size="large"
             fullWidth
-            disabled
-            startIcon={<WindowRoundedIcon />}
-            sx={{ fontWeight: 600, color: "text.primary", borderColor: "divider" }}
+            
+            startIcon={
+              <Image src="/images/sso%20icon.png" alt="" width={18} height={18} />
+            }
+            sx={{
+              fontWeight: 600,
+              color: "rgba(51, 65, 85, 1)",
+              borderColor: "divider",
+              borderRadius: "10px",
+              py: 1.1,
+            }}
           >
             Continue with Microsoft SSO
           </Button>

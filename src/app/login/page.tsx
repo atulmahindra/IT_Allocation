@@ -3,6 +3,8 @@ import { Suspense } from "react";
 import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import LoginForm from "@/features/auth/components/LoginForm";
+import PublicHeader from "@/components/layout/PublicHeader";
+import PublicFooter from "@/components/layout/PublicFooter";
 
 export const metadata: Metadata = {
   title: "Sign in | IT Allocation Portal",
@@ -16,7 +18,10 @@ const HIGHLIGHTS = [
 
 export default function LoginPage() {
   return (
-    <Box sx={{ minHeight: "100vh", display: "flex" }}>
+    <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <PublicHeader />
+
+      <Box sx={{ flex: 1, display: "flex" }}>
       <Box
         sx={{
           display: { xs: "none", md: "flex" },
@@ -81,15 +86,15 @@ export default function LoginPage() {
             width: "100%",
             maxWidth: 430,
             p: { xs: 3, sm: 5 },
-            borderRadius: 4,
+            borderRadius: "24px",
             boxShadow: "0 24px 48px -12px rgba(26, 34, 51, 0.18)",
           }}
         >
           <Stack spacing={0.5} sx={{ mb: 3 }}>
-            <Typography variant="h5" sx={{ fontWeight: 700 }}>
+            <Typography variant="h4" sx={{ fontWeight: 800 }}>
               Welcome back
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body1" color="text.secondary">
               Sign in with your corporate account.
             </Typography>
           </Stack>
@@ -99,6 +104,9 @@ export default function LoginPage() {
           </Suspense>
         </Paper>
       </Box>
+      </Box>
+
+      <PublicFooter />
     </Box>
   );
 }

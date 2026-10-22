@@ -8,6 +8,12 @@ body {
   height: 100%;
 }
 
+html {
+  /* Scales root font-size (and thus all rem-based MUI typography/icons)
+     down on laptop-width viewports, back to 16px on larger displays. */
+  font-size: clamp(13px, 9px + 0.3125vw, 15px);
+}
+
 html,
 body {
   max-width: 100vw;
@@ -24,4 +30,15 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* Prevent the browser's autofill styling from overriding the input's
+   own text/background colors. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--foreground);
+  box-shadow: 0 0 0 1000px #ffffff inset;
+  transition: background-color 9999s ease-in-out 0s;
 }
