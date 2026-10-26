@@ -96,7 +96,7 @@ const CALENDAR_WIDTH = 240;
 
 function MonthLabel({ currentMonth }: { currentMonth: Dayjs }) {
   return (
-    <Typography variant="body2" sx={{ fontWeight: 700, width: CALENDAR_WIDTH, textAlign: "center" }}>
+    <Typography variant="body2" sx={{ fontWeight: 700, flex: 1, textAlign: "center" }}>
       {dayjs(currentMonth).format("MMM YYYY")}
     </Typography>
   );
@@ -130,6 +130,8 @@ export default function HeaderDateRangePicker({
 
   React.useEffect(() => {
     if (anchorEl) {
+      // Reset the draft state when the picker opens while keeping the selected range in sync with the current prop value.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDraftRange(value);
       setSelectingEnd(false);
       const today = dayjs();
@@ -177,8 +179,8 @@ export default function HeaderDateRangePicker({
       open={Boolean(anchorEl)}
       anchorEl={anchorEl}
       onClose={onClose}
-      anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-      transformOrigin={{ vertical: "top", horizontal: "left" }}
+      anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      transformOrigin={{ vertical: "top", horizontal: "center" }}
       slotProps={{ paper: { sx: { borderRadius: 2, border: "1px solid", borderColor: "divider" } } }}
     >
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -225,7 +227,11 @@ export default function HeaderDateRangePicker({
           </List>
 
           <Box sx={{ p: 1 }}>
-            <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", justifyContent: "flex-start" }}>
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{ alignItems: "center", width: "100%", justifyContent: "space-between" }}
+            >
               <Button
                 size="small"
                 onClick={() => setLeftMonth((m) => m.subtract(1, "month"))}
@@ -234,8 +240,12 @@ export default function HeaderDateRangePicker({
               >
                 <ChevronLeftRoundedIcon fontSize="small" />
               </Button>
-              <MonthLabel currentMonth={leftMonth} />
-              <MonthLabel currentMonth={rightMonth} />
+
+              <Stack direction="row" sx={{ flex: 1, alignItems: "center", justifyContent: "space-between" }}>
+                <MonthLabel currentMonth={leftMonth} />
+                <MonthLabel currentMonth={rightMonth} />
+              </Stack>
+
               <Button
                 size="small"
                 onClick={() => setLeftMonth((m) => m.add(1, "month"))}
@@ -246,7 +256,7 @@ export default function HeaderDateRangePicker({
               </Button>
             </Stack>
 
-            <Stack direction="row" spacing={0.5} sx={{ mt: 0.5, justifyContent: "flex-start" }}>
+            <Stack direction="row" spacing={0.5} sx={{ mt: 0.5, justifyContent: "space-between" }}>
               <Box sx={{ width: CALENDAR_WIDTH, ...CALENDAR_SX }}>
                 <DateCalendar
                   key={leftMonth.format("YYYY-MM")}
