@@ -16,6 +16,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import dayjs, { Dayjs } from "dayjs";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
@@ -23,6 +24,13 @@ import NotificationsNoneRoundedIcon from "@mui/icons-material/NotificationsNoneR
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { HEADER_HEIGHT, NAV_ITEMS, SIDEBAR_WIDTH } from "@/constants/navigation";
+import HeaderDateRangePicker from "./HeaderDateRangePicker";
+
+function formatRange(start: Dayjs, end: Dayjs): string {
+  if (start.isSame(end, "day")) return start.format("MMM D, YYYY");
+  if (start.isSame(end, "month")) return `${start.format("MMM D")} – ${end.format("D, YYYY")}`;
+  return `${start.format("MMM D, YYYY")} – ${end.format("MMM D, YYYY")}`;
+}
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -32,18 +40,29 @@ export default function Header({ onMenuClick }: HeaderProps) {
   const pathname = usePathname();
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const [dateAnchorEl, setDateAnchorEl] = React.useState<HTMLElement | null>(null);
 
+  const today = React.useMemo(() => dayjs(), []);
+  const [appliedRange, setAppliedRange] = React.useState<{ start: Dayjs; end: Dayjs }>({
+    start: today.subtract(3, "month"),
+    end: today,
+  });
   const currentPage =
     NAV_ITEMS.find((item) => pathname === item.href || pathname.startsWith(`${item.href}/`))?.label ??
     "Dashboard";
-
-  const monthYear = new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
   const handleCloseMenu = () => setAnchorEl(null);
   const handleLogout = () => {
     handleCloseMenu();
     logout();
+  };
+
+  const handleOpenDatePicker = (event: React.MouseEvent<HTMLElement>) => setDateAnchorEl(event.currentTarget);
+  const handleCloseDatePicker = () => setDateAnchorEl(null);
+  const handleApplyRange = (range: { start: Dayjs; end: Dayjs }) => {
+    setAppliedRange(range);
+    handleCloseDatePicker();
   };
 
   return (
@@ -92,6 +111,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
           <Stack
             direction="row"
             spacing={0.5}
+            onClick={handleOpenDatePicker}
             sx={{
               alignItems: "center",
               px: 1.5,
@@ -100,11 +120,21 @@ export default function Header({ onMenuClick }: HeaderProps) {
               borderColor: "divider",
               borderRadius: "8px",
               display: { xs: "none", sm: "flex" },
+              cursor: "pointer",
             }}
+            aria-haspopup="true"
+            aria-expanded={Boolean(dateAnchorEl)}
           >
-            <Typography variant="body2">{monthYear}</Typography>
+            <Typography variant="body2">{formatRange(appliedRange.start, appliedRange.end)}</Typography>
             <KeyboardArrowDownRoundedIcon sx={{ fontSize: 18, color: "text.secondary" }} />
           </Stack>
+
+          <HeaderDateRangePicker
+            anchorEl={dateAnchorEl}
+            value={appliedRange}
+            onClose={handleCloseDatePicker}
+            onApply={handleApplyRange}
+          />
 
           <IconButton
             size="small"
