@@ -1,9 +1,6 @@
 import { Box, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import GroupsRoundedIcon from "@mui/icons-material/GroupsRounded";
-import PersonAddAlt1RoundedIcon from "@mui/icons-material/PersonAddAlt1Rounded";
-import AccountBalanceWalletRoundedIcon from "@mui/icons-material/AccountBalanceWalletRounded";
 import AllocationStatCard from "./AllocationStatCard";
 import AllocationChart from "./AllocationChart";
 import { SELECTED, TOTAL_IT_BUDGET, formatInr } from "../data/allocationOverview";
@@ -37,7 +34,7 @@ export default function DashboardContent() {
             unit="employees"
             secondaryValue={formatInr(SELECTED.fixedCost)}
             caption="Monthly allocation cost"
-            icon={GroupsRoundedIcon}
+            icon="/card/Fixed_Employees.png"
           />
         </Grid>
         <Grid size={{ xs: 12, md: 4 }}>
@@ -47,7 +44,7 @@ export default function DashboardContent() {
             unit="employees"
             secondaryValue={formatInr(SELECTED.variableCost)}
             caption="New joiners / variable workforce"
-            icon={PersonAddAlt1RoundedIcon}
+            icon="/card/Variable_Employees.png"
           />
         </Grid>
         <Grid size={{ xs: 12, md: 4 }}>
@@ -56,7 +53,7 @@ export default function DashboardContent() {
             value={formatInr(TOTAL_IT_BUDGET)}
             secondaryValue={`${SELECTED.month} 2026`}
             caption="Monthly budget allocation"
-            icon={AccountBalanceWalletRoundedIcon}
+            icon="/card/Total_IT_Budget.png"
           />
         </Grid>
       </Grid>

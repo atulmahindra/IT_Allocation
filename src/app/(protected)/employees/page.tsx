@@ -2,9 +2,6 @@ import type { Metadata } from "next";
 import { Box, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import GroupsRoundedIcon from "@mui/icons-material/GroupsRounded";
-import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
-import PersonAddAlt1RoundedIcon from "@mui/icons-material/PersonAddAlt1Rounded";
 import StatSummaryCard from "@/components/common/StatSummaryCard";
 import EmployeeTable from "@/features/employees/components/EmployeeTable";
 import { FIXED_EMPLOYEES, TOTAL_EMPLOYEES, VARIABLE_EMPLOYEES } from "@/features/employees/data/employeeDirectory";
@@ -33,7 +30,7 @@ export default function EmployeesPage() {
             label="Total employees"
             value={TOTAL_EMPLOYEES}
             caption={`Sample subset · ${monthYear}`}
-            icon={GroupsRoundedIcon}
+            icon="/card/Fixed_Employees.png"
           />
         </Grid>
         <Grid size={{ xs: 12, md: 4 }}>
@@ -41,7 +38,7 @@ export default function EmployeesPage() {
             label="Fixed employees"
             value={FIXED_EMPLOYEES}
             caption="Within the 10-record sample subset"
-            icon={PersonRoundedIcon}
+            icon="/card/fixed_employees1.png"
           />
         </Grid>
         <Grid size={{ xs: 12, md: 4 }}>
@@ -49,7 +46,7 @@ export default function EmployeesPage() {
             label="Variable employees"
             value={VARIABLE_EMPLOYEES}
             caption="Within the 10-record sample subset"
-            icon={PersonAddAlt1RoundedIcon}
+            icon="/card/Variable_Employees.png"
           />
         </Grid>
       </Grid>

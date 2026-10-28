@@ -1,5 +1,5 @@
+import Image from "next/image";
 import { Box, Paper, Stack, Typography } from "@mui/material";
-import type { SvgIconProps } from "@mui/material";
 
 interface AllocationStatCardProps {
   label: string;
@@ -7,7 +7,7 @@ interface AllocationStatCardProps {
   unit?: string;
   secondaryValue: string;
   caption: string;
-  icon: React.ComponentType<SvgIconProps>;
+  icon: string;
 }
 
 export default function AllocationStatCard({
@@ -16,7 +16,7 @@ export default function AllocationStatCard({
   unit,
   secondaryValue,
   caption,
-  icon: Icon,
+  icon,
 }: AllocationStatCardProps) {
   return (
     <Paper
@@ -27,7 +27,7 @@ export default function AllocationStatCard({
         <Typography variant="body2" color="text.secondary">
           {label}
         </Typography>
-        <Icon fontSize="small" sx={{ color: "text.secondary" }} />
+        <Image src={icon} alt={label} width={0} height={0} style={{ width: "auto", height: "auto" }} />
       </Stack>
 
       <Stack direction="row" spacing={0.75} sx={{ alignItems: "baseline", mt: 1 }}>

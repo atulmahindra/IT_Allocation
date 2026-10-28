@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Box, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import LaptopRoundedIcon from "@mui/icons-material/LaptopRounded";
-import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import StatSummaryCard from "@/components/common/StatSummaryCard";
 import LaptopTable from "@/features/laptops/components/LaptopTable";
 import {
@@ -37,7 +35,7 @@ export default function LaptopsPage() {
             label="Total laptop allocations"
             value={TOTAL_LAPTOP_ALLOCATIONS}
             caption="Hardware assigned in 10 sample records"
-            icon={LaptopRoundedIcon}
+            icon="/card/Total_laptop_allocations.png"
           />
         </Grid>
         <Grid size={{ xs: 12, md: 4 }}>
@@ -45,7 +43,7 @@ export default function LaptopsPage() {
             label="E1 licence count"
             value={E1_LICENCE_COUNT}
             caption="Licence assignments across all 10 records"
-            icon={CheckCircleOutlineRoundedIcon}
+            icon="/card/E1_licence_count.png"
           />
         </Grid>
         <Grid size={{ xs: 12, md: 4 }}>
@@ -53,7 +51,7 @@ export default function LaptopsPage() {
             label="E3 licence count"
             value={E3_LICENCE_COUNT}
             caption="Licence assignments across all 10 records"
-            icon={CheckCircleOutlineRoundedIcon}
+            icon="/card/E3 licence count.png"
           />
         </Grid>
       </Grid>
