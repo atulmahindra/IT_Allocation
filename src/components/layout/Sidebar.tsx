@@ -63,7 +63,7 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
       <List sx={{ px: 1.5, py: 0.5, flexGrow: 1 }}>
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
-          const Icon = item.icon;
+          const iconPath = isActive ? item.activeIcon : item.icon;
           return (
             <ListItemButton
               key={item.href}
@@ -81,8 +81,8 @@ export default function Sidebar({ mobileOpen, onClose }: SidebarProps) {
                 },
               }}
             >
-              <ListItemIcon sx={{ minWidth: 38, color: isActive ? "inherit" : "text.secondary" }}>
-                <Icon fontSize="small" />
+              <ListItemIcon sx={{ minWidth: 38, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Image src={iconPath} alt={item.label} width={0} height={0} style={{ width: "auto", height: "auto" }} />
               </ListItemIcon>
               <ListItemText
                 primary={item.label}
